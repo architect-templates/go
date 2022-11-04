@@ -1,0 +1,104 @@
+name: go-demo
+description: |
+  Example component that includes a Golang server that renders templates
+  and allows creation of items in a database
+
+keywords:
+  - go
+  - golang
+
+# Add secrets to be used by different services. For more information:
+# https://docs.architect.io/deployments/secrets/
+secrets:
+  db_user:
+    description: Root user to assign to the component's DB
+    default: architect
+  db_pass:
+    description: Root password to assign to the component's DB
+    default: secret
+  db_name:
+    description: Name of the DB the component will store content in
+    default: app-db
+  db_port:
+    description: Port for the db
+    default: 5432
+
+# Below are the configured services for the Go component.
+# For more info - https://docs.architect.io/components/services/
+services:
+  ### This service is the actual Go component ###
+  app:
+    # Build context is the location of your application relative to the architect.yml file
+    build:
+      context: .
+    # Main interface port used to help define the url in the top level `interfaces` block at the bottom of this file
+    interfaces:
+      main: &port 8000
+    # Set environment variables for your application here
+    environment:
+      PORT: *port
+      DB_NAME: ${{ secrets.db_name }}
+      DB_USER: ${{ secrets.db_user }}
+      DB_PASSWORD:  ${{ secrets.db_pass }}
+      DB_HOST: ${{ services.app-db.interfaces.database.host }}
+      DB_PORT: ${{ services.app-db.interfaces.database.port }}
+    # We want our app to start up after the db is running so that we can connect to it on startup!
+    # This block contains a list of services we need to start before 'app' starts.
+    depends_on:
+      - app-db
+    # The liveness_probe makes sure the application is healthy - if not, it will re-start the application
+    liveness_probe:
+      # Uses curl to check if this route returns a 200
+      path: /
+      port: 8000
+      interval: 5s
+    # Debug block is used to modify behavior when running `architect dev` (without the --debug=false flag)
+    #   One common example is to enable hot-reloading for local development. For more info, see -
+    #   https://docs.architect.io/components/local-configuration/#hot-reloading
+    debug:
+      # reflex (https://github.com/cespare/reflex) allows us to run a command
+      # every time file changes are detected. When running locally, this will
+      # rebuild our server and run it again.
+      command: |
+        reflex -s -- sh -c '
+          go build -o server
+          ./server
+        '
+      build:
+        args:
+          DEBUG: '1'
+      volumes:
+        # Def
+        app:
+          # Path to source code we want to mount relative to the architect.yml file
+          host_path: ./server
+          # The `WORKDIR` defined in the Dockerfile, where we want our code to be mounteds
+          mount_path: /usr/src
+
+
+  #  This is an additional service that adds a postgres database
+  #   to show off Architect's support for microservice architecture
+  #   through service discovery. For more info, check out:
+  #   https://docs.architect.io/components/service-discovery/
+  app-db:
+    image: postgres:12
+    interfaces:
+      database:
+        port: ${{ secrets.db_port }}
+        protocol: postgresql
+    environment:
+      POSTGRES_DB: ${{ secrets.db_name }}
+      POSTGRES_USER: ${{ secrets.db_user }}
+      POSTGRES_PASSWORD: ${{ secrets.db_pass }}
+
+
+# Interfaces are used to expose our application to the gateway, allowing
+#   other services and dependencies to connect to one another.
+#   For more info - https://docs.architect.io/components/interfaces/
+interfaces:
+  # Interface for our main Go application
+  app:
+    url: ${{ services.app.interfaces.main.url }}
+    # This ingress allows us to connect to this service from outside the cluster
+    ingress:
+      subdomain: app
