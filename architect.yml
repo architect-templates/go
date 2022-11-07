@@ -68,11 +68,11 @@ services:
         args:
           DEBUG: '1'
       volumes:
-        # Def
+        # The name of the volume we are creating
         app:
           # Path to source code we want to mount relative to the architect.yml file
           host_path: ./server
-          # The `WORKDIR` defined in the Dockerfile, where we want our code to be mounteds
+          # The `WORKDIR` defined in the Dockerfile, where we want our code to be mounted
           mount_path: /usr/src
 
 
