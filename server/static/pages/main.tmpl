@@ -27,7 +27,7 @@
     </div>
 {{ end }}
 
-{{ define "user_input" }}
+{{ define "rating_form" }}
     <form action="/movie/" method="post">
         <div class="user_inputs">
             <label for="formName"
@@ -69,7 +69,7 @@
     </form>
 {{ end }}
 
-{{ define "user_table" }}
+{{ define "rating_table" }}
     {{ if .Movies }}
         <table class="table table-striped table-bordered">
             <thead>
