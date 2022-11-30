@@ -8,10 +8,12 @@ import (
 	"os"
 	"strconv"
 
-	"server/static"
-
 	"gorm.io/gorm"
 )
+
+// File system folders that contain static resources/templates
+var STATIC_DIR = "static"
+var TEMPLATE_DIR = "templates"
 
 func main() {
 	db := configureDb()
@@ -19,7 +21,7 @@ func main() {
 	// Serves our main template
 	http.HandleFunc("/", handleRoot(db))
 	// Serves our static css assets
-	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.FS(static.StyleAssets))))
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir(STATIC_DIR))))
 	// Handles POST requests to add new Movies to the database for display
 	http.HandleFunc("/movie/", handleCreateMovie(db))
 
@@ -50,7 +52,7 @@ func handleRoot(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) {
 			Movies: movies,
 		}
 
-		renderFiles(w, "main", data)
+		renderFiles(w, "movie_rating", data)
 	}
 }
 
@@ -89,8 +91,12 @@ func handleCreateMovie(db *gorm.DB) func(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-func renderFiles(w http.ResponseWriter, tmpl string, data any) {
-	t, err := template.ParseFS(static.TemplateAssets, "base.tmpl", fmt.Sprintf("pages/%v.tmpl", tmpl))
+func renderFiles(w http.ResponseWriter, template_name string, data any) {
+	// The base template is always included in whatever template we render.
+	base_template := fmt.Sprintf("%v/base.tmpl", TEMPLATE_DIR)
+	template_to_render := fmt.Sprintf("%v/%v.tmpl", TEMPLATE_DIR, template_name)
+	t, err := template.ParseFiles(base_template, template_to_render)
+	// t, err := template.ParseFS(http.Dir("templates"), "base.tmpl", fmt.Sprintf("pages/%v.tmpl", tmpl))
 	if err != nil {
 		log.Fatal(err)
 	}
