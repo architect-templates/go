@@ -52,7 +52,7 @@ func handleRoot(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) {
 			Movies: movies,
 		}
 
-		renderFiles(w, "movie_rating", data)
+		renderTemplate(w, "movie_rating", data)
 	}
 }
 
@@ -91,12 +91,12 @@ func handleCreateMovie(db *gorm.DB) func(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-func renderFiles(w http.ResponseWriter, template_name string, data any) {
+func renderTemplate(w http.ResponseWriter, template_name string, data any) {
 	// The base template is always included in whatever template we render.
 	base_template := fmt.Sprintf("%v/base.tmpl", TEMPLATE_DIR)
 	template_to_render := fmt.Sprintf("%v/%v.tmpl", TEMPLATE_DIR, template_name)
 	t, err := template.ParseFiles(base_template, template_to_render)
-	// t, err := template.ParseFS(http.Dir("templates"), "base.tmpl", fmt.Sprintf("pages/%v.tmpl", tmpl))
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -107,7 +107,7 @@ func renderFiles(w http.ResponseWriter, template_name string, data any) {
 }
 
 func handle404(w http.ResponseWriter) {
-	w.WriteHeader(http.StatusBadRequest)
+	w.WriteHeader(http.StatusNotFound)
 	fmt.Fprintf(w, "Not Found")
 }
 
