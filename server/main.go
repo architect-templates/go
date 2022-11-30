@@ -16,7 +16,7 @@ var STATIC_DIR = "static"
 var TEMPLATE_DIR = "templates"
 
 func main() {
-	db := configureDb()
+	db := ConfigureDb()
 
 	// Serves our main template
 	http.HandleFunc("/", handleRoot(db))
