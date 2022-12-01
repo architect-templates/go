@@ -48,9 +48,7 @@ services:
       - app-db
     # The liveness_probe makes sure the application is healthy - if not, it will re-start the application
     liveness_probe:
-      # Uses curl to check if this route returns a 200
-      path: /
-      port: 8000
+      command: wget --spider -q localhost:8000
       interval: 5s
     # Debug block is used to modify behavior when running `architect dev` (without the --debug=false flag)
     #   One common example is to enable hot-reloading for local development. For more info, see -

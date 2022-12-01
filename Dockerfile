@@ -1,9 +1,6 @@
 FROM golang:1.19-alpine
 ARG DEBUG
 
-# Download curl - this is used by our liveness_probe
-RUN apk --no-cache add curl
-
 WORKDIR /usr/src
 
 RUN if [ "$DEBUG" = "1" ] ; then \
