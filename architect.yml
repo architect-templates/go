@@ -31,9 +31,13 @@ services:
     # Build context is the location of your application relative to the architect.yml file
     build:
       context: .
-    # Main interface port used to help define the url in the top level `interfaces` block at the bottom of this file
     interfaces:
-      main: &port 8000
+      main:
+        # Sets the port this service will listen for traffic on
+        port: &port 8000
+        # Setting an ingress allows us to connect to this service from outside the cluster
+        ingress:
+          subdomain: app
     # Set environment variables for your application here
     environment:
       PORT: *port
@@ -88,15 +92,3 @@ services:
       POSTGRES_DB: ${{ secrets.db_name }}
       POSTGRES_USER: ${{ secrets.db_user }}
       POSTGRES_PASSWORD: ${{ secrets.db_pass }}
-
-
-# Interfaces are used to expose our application to the gateway, allowing
-#   other services and dependencies to connect to one another.
-#   For more info - https://docs.architect.io/components/interfaces/
-interfaces:
-  # Interface for our main Go application
-  app:
-    url: ${{ services.app.interfaces.main.url }}
-    # This ingress allows us to connect to this service from outside the cluster
-    ingress:
-      subdomain: app
