@@ -22,8 +22,8 @@ func main() {
 	http.HandleFunc("/", handleRoot(db))
 	// Serves our static css assets
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir(STATIC_DIR))))
-	// Handles POST requests to add new Movies to the database for display
-	http.HandleFunc("/movie/", handleCreateMovie(db))
+	// Handles POST requests to add new Items to the database for display
+	http.HandleFunc("/item/", handleCreateItem(db))
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -42,21 +42,21 @@ func handleRoot(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Query movies from the database
-		var movies []Movie
-		db.Find(&movies)
+		// Query items from the database
+		var items []Item
+		db.Find(&items)
 
 		data := struct {
-			Movies []Movie
+			Items []Item
 		}{
-			Movies: movies,
+			Items: items,
 		}
 
-		renderTemplate(w, "movie_rating", data)
+		renderTemplate(w, "item_rating", data)
 	}
 }
 
-func handleCreateMovie(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) {
+func handleCreateItem(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "POST" {
 			handle404(w)
@@ -84,9 +84,9 @@ func handleCreateMovie(db *gorm.DB) func(w http.ResponseWriter, r *http.Request)
 			return
 		}
 
-		db.Create(&Movie{Name: name, Rating: uint(rating_number)})
+		db.Create(&Item{Name: name, Rating: uint(rating_number)})
 
-		// Redirect users back to the home page after creating their movie rating
+		// Redirect users back to the home page after creating their item rating
 		redirect(w, r, "/")
 	}
 }
