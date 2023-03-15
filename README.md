@@ -11,61 +11,119 @@
 </p>
 
 ---
-# Using Golang on Architect
-It is extremely common to run a REST API with a backend database as a standalone service so that it can be consumed by
-multiple, disparate applications.
 
-In this example, you'll learn how to capture an app written with [Go](https://go.dev/) and a [Postgres](https://www.postgresql.org/)
-database backend as a [dependency](https://docs.architect.io/components/dependencies/) using Architect to enable automated deployments, networking and network security for your application - wherever it gets deployed.
+<p align="center">
+  <a href="//go.dev" target="blank"><img src="/golang-logo.svg" width="320" alt="Go Logo" /></a>
+</p>
 
-In the `architect.yml` file for this project, we describe this app as two deployable services. However, we also
-leverage Architect's [service discovery](//docs.architect.io/components/service-discovery) features to populate environment
-secrets by reference. This not only allows us to automatically connect the services to each other, but it also allows
-Architect to build strict network policies to whitelist the traffic between these services. Now we won't have any work ahead
-of us to promote this stack from local dev all the way through to production!
+---
 
-[Learn more about the architect.yml file](//docs.architect.io/configuration)
 
-## Using the app and API
+# Go Starter Project
 
-This service implements GET/POST functionality for a simple `Movies` schema consisting of a `name` and a `rating` between 1 and 5.
-You could use it to gather data about anything you want to rate, from your favorite restaurants, movies, and more!
+This project is an example application written in [Go](https://go.dev/) with a [Postgres](https://www.postgresql.org/) database backend packaged into an Architect component.
 
-### The `Movies` Schema:
+This starter application will show how easy it is to deploy an application both locally and in a remote environment.
 
+## Pre-reqs
+* Install [Docker](https://docs.docker.com/get-docker/) and make sure it's running
+* Install the [Architect CLI](https://github.com/architect-team/architect-cli)
+* [Sign up for a free Architect account](https://cloud.architect.io/signup)
+
+## Clone the repo
+To use this project, you can clone this repo yourself or use the `architect init` command.
+
+### Use `architect init`
+You can use the `architect init` command to clone this repo locally. A drop-down list of Starter Projects is
+displayed for you to select from.
+
+```bash
+% architect init
+? What is the name of your project? my-starter-project
+? Please select a framework/language for your project Go
+
+######################################
+##### Let's set up your project! #####
+######################################
+
+Creating project directory... ✓
+Pulling down GitHub repository... ✓ go
+
+Successfully created project my-starter-project.
+
+Your project is ready to be deployed by Architect!
+To deploy locally, run:
+	architect dev my-starter-project/architect.yml
 ```
-  {
-    "name": "string",
-    "rating": "integer"
-  }
+
+```sh
+$ architect init go
+$ cd ./go
 ```
 
-In the Go service under `server/static/base.tmpl`, uncomment the `user_input` and `user_table` template blocks to interact with the API and Database components of the app.
-
-## Running Locally
-The `architect.yml` file is declarative, which allows the Architect Component it describes to be run in any environment,
-from local development all the way to production. Follow these steps to clone this repository and run the application
-locally.
-
-Once the deployment has completed, you can reach your new service by going to https://app.localhost.architect.sh.
+### Clone it yourself
+Run the following command to clone the repo yourself:
 
 ```sh
 # Clone the repository and navigate to this directory
-$ git clone https://github.com/architect-templates/go.git
+$ git clone git@github.com:architect-templates/go.git
 $ cd ./go
-
-# Deploy locally using the dev command
-$ architect dev architect.yml
 ```
 
-## Deploying to the Cloud
-
-Want to try deploying this to a cloud environment? Architect's got you covered there, too! It only takes a minute to
-[sign up for a free account](https://cloud.architect.io/signup).
-
-You can then [deploy the application](https://docs.architect.io/getting-started/introduction/#deploy-to-the-cloud) by running the command below. Note that “example-environment” is the free environment that is created with your Architect account.
+## Run Locally
+Once the repo has been cloned to your local machine, execute the following command from the `go` directory to run it locally:
 
 ```sh
-# Deploy to Architect Cloud
-$ architect deploy architect.yml -e example-environment
+$ architect dev .
 ```
+
+When this command completes, you can reach your new application by going to https://app.localhost.architect.sh.
+### Make your own changes
+
+This application's `architect.yml` file contains a `debug` block that enables hot-reloading for each service
+within the component. That means you can make changes to the source code and those changes will be applied to the
+environment automatically. This allows you to quickly iterate and see your changes without having to restart the
+application stack.
+
+Give it a try! Search inside your project for “Movie Ratings” and change this string to “Pizza Ratings.” Once you save
+the file, you’ll see the frontend service recompiling in the logs and then your browser window will update automatically.
+
+## Deploy to the Cloud
+Want to try deploying this application to a cloud environment? Architect's got you covered there, too!
+We offer free preview environments in our community cloud where you can deploy your applications
+before deploying to staging or prod. This is a great opportunity for testing and getting early feedback before merging
+your code. In fact, you can [configure your GitOps](https://docs.architect.io/tutorial/creating-a-component)
+to automatically deploy every PR to Architect's community cloud.
+
+### Create an environment
+
+To create a new environment on Architect's
+free cloud, run the following command:
+
+```sh
+architect environments:create my-first-environment
+```
+This command presents you with a list of Kubernetes clusters. Since you haven't added any external clusters to your
+account, you should only see `architect`. Hit enter to create your environment on Architect's community cloud.
+
+```sh
+? Select a cluster (Use arrow keys or type to search)
+❯  architect
+```
+When the command completes, you should see output similar to the following:
+```sh
+%architect environments:create my-first-environment
+? Select a cluster architect
+Registering environment with Architect... done
+Environment created: https://cloud.architect.io/<account-name>/environments/my-first-environment
+```
+
+### Deploy your component
+
+You are now ready to deploy your component to your environment in Architect's community cloud. To deploy your component,
+run the following command from the `go` directory:
+
+```sh
+architect deploy go-demo:latest --account <account-name> --environment my-first-environment
+```
+Congrats! You've deployed your first component using Architect.
