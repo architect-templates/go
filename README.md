@@ -38,7 +38,7 @@ You can use the `architect init` command to clone this repo locally. A drop-down
 displayed for you to select from.
 
 ```bash
-% architect init
+$ architect init
 ? What is the name of your project? my-starter-project
 ? Please select a framework/language for your project Go
 
@@ -57,8 +57,7 @@ To deploy locally, run:
 ```
 
 ```sh
-$ architect init go
-$ cd ./go
+$ cd ./my-starter-project
 ```
 
 ### Clone it yourself
@@ -101,7 +100,7 @@ To create a new environment on Architect's
 free cloud, run the following command:
 
 ```sh
-architect environments:create my-first-environment
+$ architect environments:create my-first-environment
 ```
 This command presents you with a list of Kubernetes clusters. Since you haven't added any external clusters to your
 account, you should only see `architect`. Hit enter to create your environment on Architect's community cloud.
@@ -112,7 +111,7 @@ account, you should only see `architect`. Hit enter to create your environment o
 ```
 When the command completes, you should see output similar to the following:
 ```sh
-%architect environments:create my-first-environment
+$ architect environments:create my-first-environment
 ? Select a cluster architect
 Registering environment with Architect... done
 Environment created: https://cloud.architect.io/<account-name>/environments/my-first-environment
@@ -124,6 +123,6 @@ You are now ready to deploy your component to your environment in Architect's co
 run the following command from the `go` directory:
 
 ```sh
-architect deploy go-demo:latest --account <account-name> --environment my-first-environment
+$ architect deploy go-demo:latest --account <account-name> --environment my-first-environment
 ```
 Congrats! You've deployed your first component using Architect.
