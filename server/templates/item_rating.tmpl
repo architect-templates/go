@@ -1,0 +1,55 @@
+{{ define "rating_form" }}
+    <form action="/item/" method="post">
+        <h1>Favorite Movie</h1>
+        <div class="user_inputs">
+            <input
+                placeholder="Name*"
+                type="text"
+                id="formName"
+                name="name"
+                class="form-control"
+                value=""
+                minlength="1"
+                maxlength="80"
+                required>
+            <input
+                placeholder="Rating 1-5*"
+                type="number"
+                id="formRating"
+                name="rating"
+                class="form-control"
+                value=""
+                min="1"
+                max="5"
+                required>
+        </div>
+        <div class="d-grid gap-2">
+            <button type="submit">
+                Submit
+            </button>
+        </div>
+    </form>
+{{ end }}
+
+{{ define "rating_table" }}
+    {{ if .Items }}
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Rating</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ range $item := .Items }}
+                <tr>
+                    <td>{{ $item.Name }}</td>
+                    <td>{{ $item.Rating }}</td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+    {{ else }}
+        <p>No entries found</p>
+    {{ end }}
+{{ end }}

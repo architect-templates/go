@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Movie struct {
+type Item struct {
 	gorm.Model
 	Name   string
 	Rating uint
@@ -26,7 +26,7 @@ func ConfigureDb() *gorm.DB {
 	}
 
 	// Migrate our database to add this table if it's not already present
-	db.AutoMigrate(Movie{})
+	db.AutoMigrate(Item{})
 
 	return db
 }

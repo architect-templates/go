@@ -1,0 +1,3 @@
+kubernetes/*
+docker-compose.yml
+server/server
